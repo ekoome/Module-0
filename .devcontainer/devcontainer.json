@@ -8,12 +8,35 @@
 		"ghcr.io/jsburckhardt/devcontainer-features/ruff:1": {},
 		"ghcr.io/jsburckhardt/devcontainer-features/uv:1": {}
 	},
+	"postCreateCommand": {
+        // Fix permissions on the volume mount; see https://github.com/microsoft/vscode-remote-release/issues/9931
+        // Create a virtual environment
+        // Install an example package (you would install a requirements file in practice)
+        "setupEnvironment": "sudo chown -R $(whoami): ${containerWorkspaceFolder}/.venv && uv venv ${containerWorkspaceFolder}/.venv &&  uv pip install requirements.txt && uv pip install requirements.extra.txt"
+    },
+    "mounts": [
+        // Mount the `.venv` as a volume to avoid collision with the one  from
+        // the host machine's workspace.
+        // See https://github.com/astral-sh/uv-docker-example/blob/main/run.sh#L11
+        "target=${containerWorkspaceFolder}/.venv,type=volume"
+    ],
+    "remoteEnv": {
+        // Activate the virtual environment
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+    },
+    "runArgs": [
+        "--env-file",
+        ".devcontainer/devcontainer.env"
+    ],
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"astral-sh.ty",
 				"charliermarsh.ruff"
-			]
+			],
+			"settings": {
+                "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python"
+            }
 		}
 	}
 	// Features to add to the dev container. More info: https://containers.dev/features.
