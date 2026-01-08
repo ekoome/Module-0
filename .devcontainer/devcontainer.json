@@ -12,7 +12,7 @@
         // Fix permissions on the volume mount; see https://github.com/microsoft/vscode-remote-release/issues/9931
         // Create a virtual environment
         // Install an example package (you would install a requirements file in practice)
-        "setupEnvironment": "sudo chown -R $(whoami): ${containerWorkspaceFolder}/.venv && uv venv ${containerWorkspaceFolder}/.venv &&  uv pip install requirements.txt && uv pip install requirements.extra.txt"
+        "setupEnvironment": "sudo chown -R $(whoami): ${containerWorkspaceFolder}/.venv && uv venv ${containerWorkspaceFolder}/.venv && uv pip install -r requirements.txt && uv pip install -r requirements.extra.txt && source .venv/bin/activate"
     },
     "mounts": [
         // Mount the `.venv` as a volume to avoid collision with the one  from
@@ -24,10 +24,6 @@
         // Activate the virtual environment
         "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
     },
-    "runArgs": [
-        "--env-file",
-        ".devcontainer/devcontainer.env"
-    ],
 	"customizations": {
 		"vscode": {
 			"extensions": [
